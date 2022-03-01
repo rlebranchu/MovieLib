@@ -1,0 +1,259 @@
+﻿<UserControl x:Class="MovieLib.Client.Views.LibrairyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:views="clr-namespace:MovieLib.Client.Views"
+      xmlns:window="clr-namespace:MovieLib.Client"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid DataContext="{Binding LibrairyViewModel}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Style="{StaticResource LabelTitleStyle}">Filtres</Label>
+            <StackPanel Grid.Row="1">
+                <Label>Par titre</Label>
+                <TextBox Grid.Row="2" controls:TextBoxHelper.Watermark="Par défaut : Harry Potter" Text="{Binding SearchTitle, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding SearchMoviesCommand}" Key="Enter"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Label>Par Année</Label>
+                <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" ItemsSource="{Binding ListYears}"  SelectedItem="{Binding SearchYear}"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Column="1">
+            <TabControl Grid.Column="1">
+                <TabItem Header="Librairie de films">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="Aucun film trouvé pour cette recherche !" Style="{StaticResource TextBlockMessageStyle}"
+                           Visibility="{Binding ListMovies, Converter={StaticResource SharedListSizeToVisibilityConverterKey}, ConverterParameter=!}"/>
+                        <ListBox Grid.Row="1" ItemsSource="{Binding ListMovies}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding SelectedSearchMovie}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Style="{StaticResource GridMovie}" Height="auto">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0" Width="{Binding DataContext.OptionViewModel.PosterSize, RelativeSource={RelativeSource AncestorType=window:MainWindow}}">
+                                            <Image Source="{Binding PosterPath}"/>
+                                            <Button Width="20" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                                Command="{Binding DataContext.LibrairyViewModel.SetMovieMyCollectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}">
+                                                <Button.Template>
+                                                    <ControlTemplate>
+                                                        <Image>
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource SharedListContainsToFilePathConverterKey}" UpdateSourceTrigger="PropertyChanged">
+                                                                    <MultiBinding.Bindings>
+                                                                        <Binding Path="."/>
+                                                                        <Binding Path="DataContext.LibrairyViewModel.ListMyCollectionMovies" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=UserControl}"/>
+                                                                    </MultiBinding.Bindings>
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Grid>                                        
+                                        <StackPanel Grid.Row="1" Orientation="Vertical">
+                                            <TextBlock Style="{StaticResource TextBlockTitleMovieStyle}" Text="{Binding Title}" TextWrapping="Wrap"/>
+                                            <TextBlock Style="{StaticResource TextBlockDateMovieStyle}" Text="{Binding ReleaseDate, StringFormat=d}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Ma collection">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="Aucun film trouvé pour cette recherche !" Style="{StaticResource TextBlockMessageStyle}"
+                           Visibility="{Binding ListMovies, Converter={StaticResource SharedListSizeToVisibilityConverterKey}, ConverterParameter=!}"/>
+                        <ListBox Grid.Row="1" ItemsSource="{Binding ListMyCollectionMovies}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding SelectedSearchMovie}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Style="{StaticResource GridMovie}" Height="auto">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0" Width="{Binding DataContext.OptionViewModel.PosterSize, RelativeSource={RelativeSource AncestorType=window:MainWindow}}">
+                                            <Image Source="{Binding PosterPath}"/>
+                                            <Button Width="20" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                                Command="{Binding DataContext.LibrairyViewModel.SetMovieMyCollectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}">
+                                                <Button.Template>
+                                                    <ControlTemplate>
+                                                        <Image>
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource SharedListContainsToFilePathConverterKey}" UpdateSourceTrigger="PropertyChanged">
+                                                                    <MultiBinding.Bindings>
+                                                                        <Binding Path="."/>
+                                                                        <Binding Path="DataContext.LibrairyViewModel.ListMyCollectionMovies" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=UserControl}"/>
+                                                                    </MultiBinding.Bindings>
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" Orientation="Vertical">
+                                            <TextBlock Style="{StaticResource TextBlockTitleMovieStyle}" Text="{Binding Title}" TextWrapping="Wrap"/>
+                                            <TextBlock Style="{StaticResource TextBlockDateMovieStyle}" Text="{Binding ReleaseDate, StringFormat=d}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+        <controls:Flyout Name="DescriptionFlyout" Header="{Binding SelectedMovie.Title}" Position="Right" MinWidth="400" Grid.Column="1"
+                         IsOpen="{Binding SelectedMovie, Converter={StaticResource SharedObjectToBoolConverterKey}}" Theme="Adapt">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource TextBlockMessageStyle}">Date :</TextBlock>
+                            <TextBlock Style="{StaticResource TextBlockMessageValueStyle}" Text="{Binding SelectedMovie.ReleaseDate, StringFormat=d}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource TextBlockMessageStyle}">Note moyenne :</TextBlock>
+                            <TextBlock Style="{StaticResource TextBlockMessageValueStyle}" Text="{Binding SelectedMovie.VoteAverage}"/>
+                            <TextBlock Style="{StaticResource TextBlockMessageValueStyle}">/10</TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource TextBlockMessageStyle}">Ma note :</TextBlock>
+                            <ComboBox Style="{StaticResource ComboxBoxStyle}" SelectedItem="{Binding RatingNote}">
+                                <ComboBox.ItemsSource>
+                                    <x:Array Type="{x:Type sys:Int32}">
+                                        <sys:Int32>0</sys:Int32>
+                                        <sys:Int32>1</sys:Int32>
+                                        <sys:Int32>2</sys:Int32>
+                                        <sys:Int32>3</sys:Int32>
+                                        <sys:Int32>4</sys:Int32>
+                                        <sys:Int32>5</sys:Int32>
+                                        <sys:Int32>6</sys:Int32>
+                                        <sys:Int32>7</sys:Int32>
+                                        <sys:Int32>8</sys:Int32>
+                                        <sys:Int32>9</sys:Int32>
+                                        <sys:Int32>10</sys:Int32>
+                                    </x:Array>
+                                </ComboBox.ItemsSource>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource TextBlockMessageStyle}">J'ai vu ce film :</TextBlock>
+                            <CheckBox  Style="{StaticResource CheckBoxStyle}" IsChecked="{Binding WatchedMovie}" Click="CheckBoxWishWatch_Clicked"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource TextBlockMessageStyle}">Je souhaite voir ce film :</TextBlock>
+                            <CheckBox  Style="{StaticResource CheckBoxStyle}" IsChecked="{Binding WishWatchMovie}" />
+                        </StackPanel>
+                        <Label Style="{StaticResource LabelWarningAdultMovieStyle}"
+                           Visibility="{Binding SelectedMovie.Adult, Converter={StaticResource SharedBoolToVisibilityConverterKey}}">
+                            Attention : Film pour adulte !
+                        </Label>
+                        <Button Style="{StaticResource YoutubeButtonStyle}" Click="YoutubeButton_Clicked">Rechercher sur Youtube</Button>
+                    </StackPanel>
+                    <Image Grid.Column="1" MaxWidth="185" VerticalAlignment="Top" Source="{Binding SelectedMovie.PosterPath}"/>
+                </Grid>
+                <StackPanel Orientation="Vertical" Grid.Row="1">
+                    <TextBlock Style="{StaticResource TextBlockMessageStyle}">Descriptif du film :</TextBlock>
+                    <TextBlock  Style="{StaticResource TextBlockMessageValueStyle}" MaxWidth="500" Margin="5" TextWrapping="Wrap" Text="{Binding SelectedMovie.Overview}"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="Aucun film similaire à ce film trouvé !" Style="{StaticResource TextBlockMessageStyle}"
+                           Visibility="{Binding SelectedMovie.Similar, Converter={StaticResource SharedListSizeToVisibilityConverterKey}, ConverterParameter=!}"/>
+                        <ListBox Grid.Row="1" ItemsSource="{Binding SelectedMovie.Similar}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Style="{StaticResource GridMovie}" Height="auto">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0" Width="{Binding DataContext.OptionViewModel.PosterSize, RelativeSource={RelativeSource AncestorType=window:MainWindow}}">
+                                            <Image Source="{Binding PosterPath}"/>
+                                            <Button Width="20" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                            Command="{Binding DataContext.LibrairyViewModel.SetMovieMyCollectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                                <Button.Template>
+                                                    <ControlTemplate>
+                                                        <Image>
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource SharedListContainsToFilePathConverterKey}" UpdateSourceTrigger="PropertyChanged">
+                                                                    <MultiBinding.Bindings>
+                                                                        <Binding Path="."/>
+                                                                        <Binding Path="DataContext.LibrairyViewModel.ListMyCollectionMovies" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=UserControl}"/>
+                                                                    </MultiBinding.Bindings>
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" Orientation="Vertical">
+                                            <TextBlock Style="{StaticResource TextBlockTitleMovieStyle}" Text="{Binding Title}" TextWrapping="Wrap"/>
+                                            <TextBlock Style="{StaticResource TextBlockDateMovieStyle}" Text="{Binding ReleaseDate, StringFormat=d}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </controls:Flyout>
+    </Grid>
+</UserControl>

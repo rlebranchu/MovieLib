@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="MovieLib.Client.Views.OptionPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MovieLib.Client.Views"
+      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid DataContext="{Binding OptionViewModel}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Column="0">
+            <Label Style="{StaticResource LabelTitleStyle}">Thèmes</Label>
+            <controls:ToggleSwitch x:Name="ThemeSwitch"
+                                   OnLabel="Dark" 
+                                   OffLabel="Light" 
+                                   HorizontalAlignment="Left"
+                                   IsCheckedChanged="ThemeSwitch_IsCheckedChanged"
+                                   IsChecked="True"/>
+            <ComboBox x:Name="ColorSwitchComboBox"
+                      HorizontalAlignment="Left"
+                      SelectionChanged="ColorSwitchComboBox_SelectionChanged">
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <Label Style="{StaticResource LabelTitleStyle}">Format Image</Label>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource TextBlockMessageValueStyle}" Text="{Binding PosterSize}"/>
+                <Slider Style="{StaticResource SliderStyle}" Minimum="100" Maximum="200" Width="200" HorizontalAlignment="Left" Value="{Binding PosterSize}"></Slider>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
